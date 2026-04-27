@@ -58,7 +58,6 @@ export default function TankPhotoModal({ tank, onClose }: Props) {
   };
 
   const tabPhotos = photos.filter((p) => p.category === activeTab);
-  const allPhotos = photos;
 
   const openLightbox = (photo: TankPhoto, allInTab: TankPhoto[]) => {
     const idx = allInTab.findIndex((p) => p.id === photo.id);

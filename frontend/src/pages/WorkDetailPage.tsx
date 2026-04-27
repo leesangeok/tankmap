@@ -11,7 +11,7 @@ import { Card, CardHeader } from '../components/ui/Card';
 import type { PhotoCategory, WorkStatus } from '../types';
 import {
   ArrowLeft, Pencil, Trash2, Calendar, Clock, Users, Gauge,
-  MapPin, Camera, CheckSquare, ChevronRight, Upload, X, Droplets, AlertTriangle, FileText, StickyNote, Wrench,
+  MapPin, Camera, CheckSquare, Upload, X, Droplets, AlertTriangle, FileText, StickyNote, Wrench,
 } from 'lucide-react';
 
 const PHOTO_CATEGORIES: PhotoCategory[] = ['before', 'during', 'after', 'oxygen'];
@@ -285,7 +285,7 @@ export default function WorkDetailPage() {
             }
           />
           <div className="space-y-1.5">
-            {checklists.map((c: any, i: number) => (
+            {checklists.map((c: any) => (
               <label key={c.id}
                 className={`flex items-center gap-3 p-3.5 rounded-xl cursor-pointer transition-all ${
                   c.isChecked

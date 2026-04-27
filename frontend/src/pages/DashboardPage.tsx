@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { worksApi } from '../api/works';
 import { useAuthStore } from '../store/authStore';
-import { STATUS_LABEL, STATUS_DOT } from '../lib/utils';
+import { STATUS_LABEL } from '../lib/utils';
 import { StatusBadge } from '../components/ui/Badge';
 import type { Work, WorkStatus } from '../types';
 import {
@@ -51,11 +51,6 @@ export default function DashboardPage() {
     .filter((w) => w.workDate.split('T')[0] > todayStr && w.status !== 'completed' && w.status !== 'on_hold')
     .sort((a, b) => a.workDate.localeCompare(b.workDate))
     .slice(0, 5);
-
-  const recentCompleted = works
-    .filter((w) => w.status === 'completed')
-    .sort((a, b) => b.workDate.localeCompare(a.workDate))
-    .slice(0, 3);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? '좋은 아침이에요' : hour < 18 ? '안녕하세요' : '수고하셨어요';

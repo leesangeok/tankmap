@@ -6,13 +6,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { worksApi, companiesApi, tanksApi } from '../api/works';
 import { TANK_TYPES, TANK_LOCATIONS } from '../lib/utils';
-import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAuthStore } from '../store/authStore';
 import type { Company, Site, Tank } from '../types';
 import {
-  ArrowLeft, Building2, MapPin, Droplets, Calendar,
-  ClipboardList, StickyNote, Plus, Check, Trash2, Wrench, X,
+  ArrowLeft, Building2, Droplets,
+  ClipboardList, StickyNote, Plus, Check, Wrench, X,
 } from 'lucide-react';
 
 // 자주 쓰는 장비 프리셋
@@ -73,7 +72,7 @@ export default function WorkFormPage() {
   const [showNewTank, setShowNewTank] = useState(false);
 
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { status: 'scheduled' },
   });
 

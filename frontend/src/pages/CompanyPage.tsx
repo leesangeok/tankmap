@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { companiesApi, tanksApi } from '../api/works';
 import { TANK_TYPES, TANK_LOCATIONS } from '../lib/utils';
-import type { Company, Site, Tank } from '../types';
+import type { Company, Tank } from '../types';
 import TankPhotoModal from '../components/TankPhotoModal';
 import { getMediaUrl } from '../api/client';
 import {

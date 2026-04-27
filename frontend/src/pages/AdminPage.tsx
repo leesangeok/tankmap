@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import type { User } from '../types';
 import {
   UserPlus, Users, ShieldCheck, UserCheck, UserX,
-  X, Mail, Lock, User as UserIcon, ChevronDown,
+  X, Mail, Lock, User as UserIcon,
 } from 'lucide-react';
 
 interface UserWithActive extends User {
