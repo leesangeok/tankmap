@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         String   @default("worker")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  createdWorks   Work[]          @relation("CreatedBy")
+  updatedWorks   Work[]          @relation("UpdatedBy")
+  uploadedPhotos WorkPhoto[]
+  tankPhotos     TankPhoto[]
+  checklists     WorkChecklist[]
+
+  @@map("users")
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  memo      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  sites     Site[]
+
+  @@map("companies")
+}
+
+model Site {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  name      String
+  address   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+  works   Work[]
+  tanks   Tank[]
+
+  @@map("sites")
+}
+
+model Tank {
+  id        String  @id @default(uuid())
+  siteId    String  @map("site_id")
+  name      String
+  location  String  // "지하" | "지상"
+  capacity  Float
+  tankType  String? @map("tank_type")
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  site      Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  workTanks WorkTank[]
+  photos    TankPhoto[]
+
+  @@map("tanks")
+}
+
+model TankPhoto {
+  id           String   @id @default(uuid())
+  tankId       String   @map("tank_id")
+  category     String   @default("general") // "location" | "interior" | "exterior" | "general"
+  url          String
+  filename     String
+  caption      String?
+  uploadedById String   @map("uploaded_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  tank       Tank @relation(fields: [tankId], references: [id], onDelete: Cascade)
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@map("tank_photos")
+}
+
+model Work {
+  id             String   @id @default(uuid())
+  siteId         String   @map("site_id")
+  title          String?
+  workDate       DateTime @map("work_date")
+  status         String   @default("scheduled")
+  durationHours  Float?   @map("duration_hours")
+  requiredPeople Int?     @map("required_people")
+  difficulty     Int?
+  equipment      String?
+  notes          String?
+  caution        String?
+  memo           String?
+  createdById    String   @map("created_by")
+  updatedById    String?  @map("updated_by")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  site       Site            @relation(fields: [siteId], references: [id])
+  createdBy  User            @relation("CreatedBy", fields: [createdById], references: [id])
+  updatedBy  User?           @relation("UpdatedBy", fields: [updatedById], references: [id])
+  photos     WorkPhoto[]
+  checklists WorkChecklist[]
+  workTanks  WorkTank[]
+
+  @@map("works")
+}
+
+model WorkTank {
+  id     String @id @default(uuid())
+  workId String @map("work_id")
+  tankId String @map("tank_id")
+
+  work Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  tank Tank @relation(fields: [tankId], references: [id])
+
+  @@unique([workId, tankId])
+  @@map("work_tanks")
+}
+
+model WorkPhoto {
+  id           String   @id @default(uuid())
+  workId       String   @map("work_id")
+  category     String
+  url          String
+  filename     String
+  uploadedById String   @map("uploaded_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  work       Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@map("work_photos")
+}
+
+model ChecklistItem {
+  id       String  @id @default(uuid())
+  label    String
+  order    Int
+  isActive Boolean @default(true) @map("is_active")
+
+  workChecklists WorkChecklist[]
+
+  @@map("checklist_items")
+}
+
+model WorkChecklist {
+  id              String    @id @default(uuid())
+  workId          String    @map("work_id")
+  checklistItemId String    @map("checklist_item_id")
+  isChecked       Boolean   @default(false) @map("is_checked")
+  checkedById     String?   @map("checked_by")
+  checkedAt       DateTime? @map("checked_at")
+
+  work          Work          @relation(fields: [workId], references: [id], onDelete: Cascade)
+  checklistItem ChecklistItem @relation(fields: [checklistItemId], references: [id])
+  checkedBy     User?         @relation(fields: [checkedById], references: [id])
+
+  @@unique([workId, checklistItemId])
+  @@map("work_checklists")
+}
