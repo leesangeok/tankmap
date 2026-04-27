@@ -32,8 +32,8 @@ workChecklistRouter.patch('/:id/checklists/:itemId', async (req: AuthRequest, re
   const checklist = await prisma.workChecklist.update({
     where: {
       workId_checklistItemId: {
-        workId: req.params.id,
-        checklistItemId: req.params.itemId,
+        workId: req.params.id as string,
+        checklistItemId: req.params.itemId as string,
       },
     },
     data: {

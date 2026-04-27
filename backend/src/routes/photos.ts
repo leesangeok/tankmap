@@ -47,7 +47,7 @@ router.post('/:id/photos', authenticate, upload.single('file'), async (req: Auth
 
   const photo = await prisma.workPhoto.create({
     data: {
-      workId: req.params.id,
+      workId: req.params.id as string,
       category,
       url,
       filename: req.file.filename,
@@ -59,7 +59,7 @@ router.post('/:id/photos', authenticate, upload.single('file'), async (req: Auth
 });
 
 router.delete('/:id/photos/:photoId', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
-  const photo = await prisma.workPhoto.findUnique({ where: { id: req.params.photoId } });
+  const photo = await prisma.workPhoto.findUnique({ where: { id: req.params.photoId as string } });
 
   if (!photo) {
     res.status(404).json({ message: '사진을 찾을 수 없습니다' });
@@ -69,7 +69,7 @@ router.delete('/:id/photos/:photoId', authenticate, async (req: AuthRequest, res
   const filePath = path.join(uploadsDir, photo.filename);
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-  await prisma.workPhoto.delete({ where: { id: req.params.photoId } });
+  await prisma.workPhoto.delete({ where: { id: req.params.photoId as string } });
   res.status(204).send();
 });
 

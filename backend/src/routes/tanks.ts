@@ -87,7 +87,7 @@ router.post('/tanks/:id/photos', upload.single('file'), async (req: AuthRequest,
 
   const photo = await prisma.tankPhoto.create({
     data: {
-      tankId: req.params.id,
+      tankId: req.params.id as string,
       category,
       caption: caption || null,
       url: `/uploads/${req.file.filename}`,
@@ -102,7 +102,7 @@ router.post('/tanks/:id/photos', upload.single('file'), async (req: AuthRequest,
 
 // 탱크 사진 삭제
 router.delete('/tanks/:id/photos/:photoId', async (req: AuthRequest, res: Response): Promise<void> => {
-  const photo = await prisma.tankPhoto.findUnique({ where: { id: req.params.photoId } });
+  const photo = await prisma.tankPhoto.findUnique({ where: { id: req.params.photoId as string } });
   if (!photo) {
     res.status(404).json({ message: '사진을 찾을 수 없습니다' });
     return;
@@ -111,7 +111,7 @@ router.delete('/tanks/:id/photos/:photoId', async (req: AuthRequest, res: Respon
   const filePath = path.join(uploadsDir, photo.filename);
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-  await prisma.tankPhoto.delete({ where: { id: req.params.photoId } });
+  await prisma.tankPhoto.delete({ where: { id: req.params.photoId as string } });
   res.status(204).send();
 });
 

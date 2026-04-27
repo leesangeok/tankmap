@@ -74,7 +74,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 
 router.get('/:id', async (req, res: Response): Promise<void> => {
   const work = await prisma.work.findUnique({
-    where: { id: req.params.id },
+    where: { id: req.params.id as string },
     include: workInclude,
   });
   if (!work) { res.status(404).json({ message: '작업을 찾을 수 없습니다' }); return; }
@@ -85,16 +85,16 @@ router.patch('/:id', async (req: AuthRequest, res: Response) => {
   const { tankIds, equipment, workDate, ...rest } = req.body;
 
   if (tankIds !== undefined) {
-    await prisma.workTank.deleteMany({ where: { workId: req.params.id } });
+    await prisma.workTank.deleteMany({ where: { workId: req.params.id as string } });
     if (tankIds.length > 0) {
       await prisma.workTank.createMany({
-        data: tankIds.map((id: string) => ({ workId: req.params.id, tankId: id })),
+        data: tankIds.map((id: string) => ({ workId: req.params.id as string, tankId: id })),
       });
     }
   }
 
   const work = await prisma.work.update({
-    where: { id: req.params.id },
+    where: { id: req.params.id as string },
     data: {
       ...rest,
       ...(workDate && { workDate: new Date(workDate) }),
@@ -108,14 +108,14 @@ router.patch('/:id', async (req: AuthRequest, res: Response) => {
 
 router.patch('/:id/status', async (req: AuthRequest, res: Response) => {
   const work = await prisma.work.update({
-    where: { id: req.params.id },
+    where: { id: req.params.id as string },
     data: { status: req.body.status, updatedById: req.user!.id },
   });
   res.json(work);
 });
 
 router.delete('/:id', requireAdmin, async (req, res: Response) => {
-  await prisma.work.delete({ where: { id: req.params.id } });
+  await prisma.work.delete({ where: { id: req.params.id as string } });
   res.status(204).send();
 });
 
